@@ -10,6 +10,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.Font;
 import java.awt.GridLayout;
 import javax.swing.JLabel;
+import java.awt.CardLayout;
 
 public class VentanaPrincipal extends JFrame {
 
@@ -21,6 +22,13 @@ public class VentanaPrincipal extends JFrame {
 	private JPanel mainPane;
 	private JPanel footer;
 	private JLabel lblPrimerInforme;
+	private JLabel lblSegundoInforme;
+	private JLabel lblTercerInforme;
+	private JLabel lblCuartoInforme;
+	private JPanel pnPrimerInforme;
+	private JPanel pnSegundoInforme;
+	private JPanel pnTercerInforme;
+	private JPanel pnCuartoInforme;
 
 	/**
 	 * Launch the application.
@@ -69,13 +77,20 @@ public class VentanaPrincipal extends JFrame {
 			leftMenu = new JPanel();
 			leftMenu.setLayout(new GridLayout(4, 1, 0, 0));
 			leftMenu.add(getLblPrimerInforme());
+			leftMenu.add(getLblSegundoInforme());
+			leftMenu.add(getLblTercerInforme());
+			leftMenu.add(getLblCuartoInforme());
 		}
 		return leftMenu;
 	}
 	private JPanel getMainPane() {
 		if (mainPane == null) {
 			mainPane = new JPanel();
-			mainPane.setLayout(new BorderLayout(0, 0));
+			mainPane.setLayout(new CardLayout(0, 0));
+			mainPane.add(getPnPrimerInforme(), "name_5548202142181");
+			mainPane.add(getPnSegundoInforme(), "name_5566166419391");
+			mainPane.add(getPnTercerInforme(), "name_5576256697813");
+			mainPane.add(getPnCuartoInforme(), "name_5588217201325");
 		}
 		return mainPane;
 	}
@@ -91,5 +106,47 @@ public class VentanaPrincipal extends JFrame {
 			lblPrimerInforme = new JLabel("Primer Informe");
 		}
 		return lblPrimerInforme;
+	}
+	private JLabel getLblSegundoInforme() {
+		if (lblSegundoInforme == null) {
+			lblSegundoInforme = new JLabel("Segundo Informe");
+		}
+		return lblSegundoInforme;
+	}
+	private JLabel getLblTercerInforme() {
+		if (lblTercerInforme == null) {
+			lblTercerInforme = new JLabel("Tercer Informe");
+		}
+		return lblTercerInforme;
+	}
+	private JLabel getLblCuartoInforme() {
+		if (lblCuartoInforme == null) {
+			lblCuartoInforme = new JLabel("Cuarto Informe");
+		}
+		return lblCuartoInforme;
+	}
+	private JPanel getPnPrimerInforme() {
+		if (pnPrimerInforme == null) {
+			pnPrimerInforme = new JPanel();
+		}
+		return pnPrimerInforme;
+	}
+	private JPanel getPnSegundoInforme() {
+		if (pnSegundoInforme == null) {
+			pnSegundoInforme = new JPanel();
+		}
+		return pnSegundoInforme;
+	}
+	private JPanel getPnTercerInforme() {
+		if (pnTercerInforme == null) {
+			pnTercerInforme = new JPanel();
+		}
+		return pnTercerInforme;
+	}
+	private JPanel getPnCuartoInforme() {
+		if (pnCuartoInforme == null) {
+			pnCuartoInforme = new JPanel();
+		}
+		return pnCuartoInforme;
 	}
 }
