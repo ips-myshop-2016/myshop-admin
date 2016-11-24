@@ -28,7 +28,7 @@ public class ControllerInformes {
 	
 	public List<Map<String,Object>> tercerInforme() {
 		String complexSql = "SELECT count(*) as suma , wk_id , date_received FROM myshop."
-				+ "full_order where status='finalizado' group by date_received, wk_id ";
+				+ "full_order where status='finalizado' and wk_id is not null group by date_received, wk_id ";
 		try (Connection con = DefaultSql2o.SQL2O.open()) {
 			return con.createQuery(complexSql).executeAndFetchTable().asList();
 		}

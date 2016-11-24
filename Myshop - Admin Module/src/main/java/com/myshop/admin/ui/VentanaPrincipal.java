@@ -337,9 +337,15 @@ public class VentanaPrincipal extends JFrame {
 		for (Map<String,Object> map1 : informe) {
 			Map<String,Object> mapa = new HashMap<String,Object>();
 			if(!estaFecha((Date)map1.get("date_completed"),res)){
-				mapa.put("date", map1.get("date_completed"));
-				mapa.put("suma1", map1.get("suma"));
-				mapa.put("id", map1.get("wk_id"));
+				mapa.put("date", map1.get("date_completed"));	
+				if((int)map1.get("wk_id") == 1){
+					mapa.put("suma1", map1.get("suma"));
+					mapa.put("id", map1.get("wk_id"));
+				}
+				if((int)map1.get("wk_id") == 2){
+					mapa.put("suma2", map1.get("suma"));
+					mapa.put("id", map1.get("wk_id"));
+				}
 				res.add(mapa);
 			}
 		}
@@ -348,7 +354,10 @@ public class VentanaPrincipal extends JFrame {
 			for(Map<String,Object> mapa2 : res){
 				if(map1.get("wk_id") != null && !map1.get("wk_id").equals(mapa2.get("id")) 
 						&& map1.get("date_completed").equals(mapa2.get("date"))){
-					mapa2.put("suma2", map1.get("suma"));
+					if((int)mapa2.get("id") == 2)
+						mapa2.put("suma2", map1.get("suma"));
+					if((int)mapa2.get("id") == 1)
+						mapa2.put("suma1", map1.get("suma"));
 				}
 			}
 		}
@@ -363,7 +372,7 @@ public class VentanaPrincipal extends JFrame {
 				nuevaFila[2] = 0;
 			else
 				nuevaFila[2] = map.get("suma2");
-			modeloTablaTercerInforme.addRow(nuevaFila);
+			modeloTablaCuartoInforme.addRow(nuevaFila);
 			
 		}
 	}
