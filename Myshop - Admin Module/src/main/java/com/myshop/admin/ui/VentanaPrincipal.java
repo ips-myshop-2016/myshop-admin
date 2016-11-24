@@ -13,11 +13,13 @@ import com.myshop.admin.controller.ControllerInformes;
 
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 
 import java.awt.CardLayout;
 import javax.swing.JScrollPane;
@@ -132,7 +134,11 @@ public class VentanaPrincipal extends JFrame {
 			lblPrimerInforme.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
-					//TODO
+					rellenarPrimerInforme();
+					getPnSegundoInforme().setVisible(false);
+					getPnTercerInforme().setVisible(false);
+					getPnCuartoInforme().setVisible(false);
+					getPnPrimerInforme().setVisible(true);	
 				}
 			});
 		}
@@ -144,7 +150,11 @@ public class VentanaPrincipal extends JFrame {
 			lblSegundoInforme.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
-					//TODO
+					rellenarSegundoInforme();
+					getPnPrimerInforme().setVisible(false);
+					getPnTercerInforme().setVisible(false);
+					getPnCuartoInforme().setVisible(false);
+					getPnSegundoInforme().setVisible(true);
 				}
 			});
 		}
@@ -157,9 +167,10 @@ public class VentanaPrincipal extends JFrame {
 				@Override
 				public void mouseClicked(MouseEvent arg0) {
 					rellenarTercerInforme();
+					getPnPrimerInforme().setVisible(false);
+					getPnSegundoInforme().setVisible(false);
+					getPnCuartoInforme().setVisible(false);
 					getPnTercerInforme().setVisible(true);
-					getScpTercerInforme().setVisible(true);
-					getTbTercerInforme().setVisible(true);
 				}
 			});
 		}
@@ -172,9 +183,10 @@ public class VentanaPrincipal extends JFrame {
 				@Override
 				public void mouseClicked(MouseEvent arg0) {
 					rellenarCuartoInforme();
+					getPnPrimerInforme().setVisible(false);
+					getPnSegundoInforme().setVisible(false);
+					getPnTercerInforme().setVisible(false);
 					getPnCuartoInforme().setVisible(true);
-					getScpCuartoInforme().setVisible(true);
-					getTbCuartoInforme().setVisible(true);
 				}
 			});
 		}
@@ -221,7 +233,7 @@ public class VentanaPrincipal extends JFrame {
 	}
 	private JTable getTbTercerInforme() {
 		if (tbTercerInforme == null) {
-			String[] columnas = { "Id almacenero","Pedidos Empaquetados", "Fecha"};
+			String[] columnas = { "Dia","Empaquetados almacenero 1", "Empaquetados almacenero 2"};
 			modeloTablaTercerInforme = new DefaultTableModel(columnas, 0) {
 				private static final long serialVersionUID = 1L;
 
@@ -236,26 +248,82 @@ public class VentanaPrincipal extends JFrame {
 	
 	private void rellenarPrimerInforme(){
 		reiniciarPrimerInforme();
-		//TODO
+		//TODO cada vez que le das a la label de primer informe llama 
+		//a este metodo, sin el reiniciar se llenaria con los mismos datos una y otra vez
+		Object[] nuevaFila = new Object[4];
+		List<Map<String,Object>> informe = new ControllerInformes().primerInforme();
+		
+		for (Map<String,Object> map : informe) {
+			/*nuevaFila[0] = map.get("date");
+			nuevaFila[1] = map.get("suma1");
+			nuevaFila[2] = map.get("suma2");
+			nuevaFila[3] = map.get("suma3")*/
+			modeloTablaPrimerInforme.addRow(nuevaFila);
+		}
 	}
 	
 	private void rellenarSegundoInforme(){
 		reiniciarSegundoInforme();
-		//TODO
+		//TODO cada vez que le das a la label de segundo informe llama a este metodo, 
+		//sin el reiniciar se llenaria con los mismos datos una y otra vez
+		Object[] nuevaFila = new Object[4];
+		List<Map<String,Object>> informe = new ControllerInformes().segundoInforme();
+		
+		for (Map<String,Object> map : informe) {
+			/*nuevaFila[0] = map.get("date");
+			nuevaFila[1] = map.get("suma1");
+			nuevaFila[2] = map.get("suma2");
+			nuevaFila[3] = map.get("suma3")*/
+			modeloTablaSegundoInforme.addRow(nuevaFila);
+		}
+	}
+
+	private boolean estaFecha(Date d,List<Map<String,Object>> l){
+		for(Map<String,Object> m : l){
+			if(m.get("date").equals(d)){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	private void rellenarTercerInforme(){
 		reiniciarTercerInforme();
 		Object[] nuevaFila = new Object[3];
 		List<Map<String,Object>> informe = new ControllerInformes().tercerInforme();
-
-		for (Map<String,Object> map : informe) {
-			if(!(map.get("wk_id") == null) && !(map.get("date_received") == null)){
-				nuevaFila[0] = map.get("wk_id");
-				nuevaFila[1] = map.get("suma");
-				nuevaFila[2] = map.get("date_received");
-				modeloTablaTercerInforme.addRow(nuevaFila);
+		
+		List<Map<String,Object>> res = new ArrayList<Map<String,Object>>();
+		for (Map<String,Object> map1 : informe) {
+			Map<String,Object> mapa = new HashMap<String,Object>();
+			if(!estaFecha((Date)map1.get("date_received"),res)){
+				mapa.put("date", map1.get("date_received"));
+				mapa.put("suma1", map1.get("suma"));
+				mapa.put("id", map1.get("wk_id"));
+				res.add(mapa);
 			}
+		}
+		
+		for (Map<String,Object> map1 : informe) {
+			for(Map<String,Object> mapa2 : res){
+				if(map1.get("wk_id") != null && !map1.get("wk_id").equals(mapa2.get("id")) 
+						&& map1.get("date_received").equals(mapa2.get("date"))){
+					mapa2.put("suma2", map1.get("suma"));
+				}
+			}
+		}
+		
+		for (Map<String,Object> map : res) {
+			nuevaFila[0] = map.get("date");
+			if(map.get("suma1") == null)
+				nuevaFila[1] = 0;
+			else
+				nuevaFila[1] = map.get("suma1");
+			if(map.get("suma2") == null)
+				nuevaFila[2] = 0;
+			else
+				nuevaFila[2] = map.get("suma2");
+			modeloTablaTercerInforme.addRow(nuevaFila);
+			
 		}
 	}
 	
@@ -265,13 +333,38 @@ public class VentanaPrincipal extends JFrame {
 		Object[] nuevaFila = new Object[3];
 		List<Map<String,Object>> informe = new ControllerInformes().cuartoInforme();
 
-		for (Map<String,Object> map : informe) {
-			if(!(map.get("wk_id") == null)){
-				nuevaFila[0] = map.get("wk_id");
-				nuevaFila[1] = map.get("suma");
-				nuevaFila[2] = map.get("date_completed");
-				modeloTablaCuartoInforme.addRow(nuevaFila);
+		List<Map<String,Object>> res = new ArrayList<Map<String,Object>>();
+		for (Map<String,Object> map1 : informe) {
+			Map<String,Object> mapa = new HashMap<String,Object>();
+			if(!estaFecha((Date)map1.get("date_completed"),res)){
+				mapa.put("date", map1.get("date_completed"));
+				mapa.put("suma1", map1.get("suma"));
+				mapa.put("id", map1.get("wk_id"));
+				res.add(mapa);
 			}
+		}
+		
+		for (Map<String,Object> map1 : informe) {
+			for(Map<String,Object> mapa2 : res){
+				if(map1.get("wk_id") != null && !map1.get("wk_id").equals(mapa2.get("id")) 
+						&& map1.get("date_completed").equals(mapa2.get("date"))){
+					mapa2.put("suma2", map1.get("suma"));
+				}
+			}
+		}
+		
+		for (Map<String,Object> map : res) {
+			nuevaFila[0] = map.get("date");
+			if(map.get("suma1") == null)
+				nuevaFila[1] = 0;
+			else
+				nuevaFila[1] = map.get("suma1");
+			if(map.get("suma2") == null)
+				nuevaFila[2] = 0;
+			else
+				nuevaFila[2] = map.get("suma2");
+			modeloTablaTercerInforme.addRow(nuevaFila);
+			
 		}
 	}
 	
@@ -307,7 +400,15 @@ public class VentanaPrincipal extends JFrame {
 	}
 	private JTable getTbPrimerInforme() {
 		if (tbPrimerInforme == null) {
-			tbPrimerInforme = new JTable();
+			String[] columnas = {  "Dia","N.Compras U.Anonimo", "N.Compras U.Registrado","N.Compras Empresas"};
+			modeloTablaPrimerInforme = new DefaultTableModel(columnas, 0) {
+				private static final long serialVersionUID = 1L;
+
+				public boolean isCellEditable(int row, int column) {
+					return false;
+				}
+			};
+			tbPrimerInforme = new JTable(modeloTablaPrimerInforme);
 		}
 		return tbPrimerInforme;
 	}
@@ -320,7 +421,15 @@ public class VentanaPrincipal extends JFrame {
 	}
 	private JTable getTbSegundoInforme() {
 		if (tbSegundoInforme == null) {
-			tbSegundoInforme = new JTable();
+			String[] columnas = {  "Dia","Compras Tarjeta", "Compras Transferencia","Compras Contra reembolso"};
+			modeloTablaSegundoInforme = new DefaultTableModel(columnas, 0) {
+				private static final long serialVersionUID = 1L;
+
+				public boolean isCellEditable(int row, int column) {
+					return false;
+				}
+			};
+			tbSegundoInforme = new JTable(modeloTablaSegundoInforme);
 		}
 		return tbSegundoInforme;
 	}
@@ -333,7 +442,7 @@ public class VentanaPrincipal extends JFrame {
 	}
 	private JTable getTbCuartoInforme() {
 		if (tbCuartoInforme == null) {
-			String[] columnas = { "Id almacenero","Ordenes de trabajo", "Fecha completadas"};
+			String[] columnas = {  "Dia","OrdenesTrabajo almacenero 1", "OrdenesTrabajo almacenero 2"};
 			modeloTablaCuartoInforme = new DefaultTableModel(columnas, 0) {
 				private static final long serialVersionUID = 1L;
 
