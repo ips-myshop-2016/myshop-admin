@@ -258,8 +258,6 @@ public class VentanaPrincipal extends JFrame {
 	
 	private void rellenarPrimerInforme(){
 		reiniciarPrimerInforme();
-		//TODO cada vez que le das a la label de primer informe llama 
-		//a este metodo, sin el reiniciar se llenaria con los mismos datos una y otra vez
 		Object[] nuevaFila = new Object[4];
 		List<Map<String,Object>> informe = new ControllerInformes().primerInforme();
 		
@@ -288,8 +286,9 @@ public class VentanaPrincipal extends JFrame {
 		}
 	}
 
-	private boolean estaFecha(String d,List<Map<String,Object>> l){
+	private boolean estaFecha(Date d,List<Map<String,Object>> l){
 		for(Map<String,Object> m : l){
+			System.out.println("Es igual: " + d + " a " + m.get("date") + "?" );
 			if(m.get("date").equals(d)){
 				return true;
 			}
@@ -302,36 +301,57 @@ public class VentanaPrincipal extends JFrame {
 		Object[] nuevaFila = new Object[6];
 		List<Map<String,Object>> informe = new ControllerInformes().tercerInforme();
 		List<Map<String,Object>> aux = new ArrayList<Map<String,Object>>();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Map<String,Object> mp;
 		for(Map<String,Object> m : informe){
 			mp = new HashMap<String,Object>();
 			mp.put("wk_id", m.get("wk_id"));
-			mp.put("date_received",sdf.format((Date)m.get("date_received")));
+			mp.put("fecha",m.get("fecha"));
 			mp.put("suma", m.get("suma"));
 			aux.add(mp);
 		}
 		List<Map<String,Object>> res = new ArrayList<Map<String,Object>>();
 		for (Map<String,Object> map1 : aux) {
 			Map<String,Object> mapa = new HashMap<String,Object>();
-			if(!estaFecha((String)map1.get("date_received"),res)){
-				mapa.put("date", map1.get("date_received"));
+			if((int)map1.get("wk_id") == 1)
 				mapa.put("suma1", map1.get("suma"));
-				mapa.put("id", map1.get("wk_id"));
-				res.add(mapa);
+			if((int)map1.get("wk_id") == 2)
+				mapa.put("suma2", map1.get("suma"));
+			if((int)map1.get("wk_id") == 3)
+				mapa.put("suma3", map1.get("suma"));
+			if((int)map1.get("wk_id") == 4)
+				mapa.put("suma4", map1.get("suma"));
+			if((int)map1.get("wk_id") == 5)
+				mapa.put("suma5", map1.get("suma"));
+			mapa.put("date", map1.get("fecha"));
+			mapa.put("id", map1.get("wk_id"));
+			res.add(mapa);
+		}
+		aux = new ArrayList<Map<String,Object>>();
+		for(Map<String,Object> m : res){
+			if(!estaFecha((Date)m.get("date"), aux))
+				aux.add(m);
+			else{
+				for(int i=0;i<aux.size();i++){
+					if(aux.get(i).get("date").equals(m.get("date"))){
+						if(m.get("id") != aux.get(i).get("id")){
+							if((int)m.get("id") == 1)
+								aux.get(i).put("suma1",m.get("suma1"));
+							if((int)m.get("id") == 2)
+								aux.get(i).put("suma2",m.get("suma2"));
+							if((int)m.get("id") == 3)
+								aux.get(i).put("suma3",m.get("suma3"));
+							if((int)m.get("id") == 4)
+								aux.get(i).put("suma4",m.get("suma4"));
+							if((int)m.get("id") == 5)
+								aux.get(i).put("suma5",m.get("suma5"));
+						}
+						
+					}
+				}		
 			}
 		}
 		
-		for (Map<String,Object> map1 : aux) {
-			for(Map<String,Object> mapa2 : res){
-				if(map1.get("wk_id") != null && !map1.get("wk_id").equals(mapa2.get("id")) 
-						&& map1.get("date_received").equals(mapa2.get("date"))){
-					mapa2.put("suma2", map1.get("suma"));
-				}
-			}
-		}
-		
-		for (Map<String,Object> map : res) {
+		for (Map<String,Object> map : aux) {
 			nuevaFila[0] = map.get("date");
 			if(map.get("suma1") == null)
 				nuevaFila[1] = 0;
@@ -359,8 +379,7 @@ public class VentanaPrincipal extends JFrame {
 	}
 	
 	private void rellenarCuartoInforme() throws ParseException{
-		reiniciarCuartoInforme();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");      
+		reiniciarCuartoInforme();  
 		Object[] nuevaFila = new Object[6];
 		List<Map<String,Object>> informe = new ControllerInformes().cuartoInforme();
 		List<Map<String,Object>> aux = new ArrayList<Map<String,Object>>();
@@ -368,59 +387,81 @@ public class VentanaPrincipal extends JFrame {
 		for(Map<String,Object> m : informe){
 			mp = new HashMap<String,Object>();
 			mp.put("wk_id", m.get("wk_id"));
-			mp.put("date_completed",sdf.format((Date)m.get("date_completed")));
+			mp.put("date_completed",m.get("fecha"));
 			mp.put("suma", m.get("suma"));
 			aux.add(mp);
 		}
 		List<Map<String,Object>> res = new ArrayList<Map<String,Object>>();
 		for (Map<String,Object> map1 : aux) {
 			Map<String,Object> mapa = new HashMap<String,Object>();
-			if(!estaFecha((String)map1.get("date_completed"),res)){
+			if(!estaFecha((Date)map1.get("date_completed"),res)){
 				mapa.put("date", map1.get("date_completed"));	
 				if((int)map1.get("wk_id") == 1){
 					mapa.put("suma1", map1.get("suma"));
-					mapa.put("id", map1.get("wk_id"));
 				}
 				if((int)map1.get("wk_id") == 2){
 					mapa.put("suma2", map1.get("suma"));
-					mapa.put("id", map1.get("wk_id"));
 				}
 				if((int)map1.get("wk_id") == 3){
 					mapa.put("suma3", map1.get("suma"));
-					mapa.put("id", map1.get("wk_id"));
 				}
 				if((int)map1.get("wk_id") == 4){
 					mapa.put("suma4", map1.get("suma"));
-					mapa.put("id", map1.get("wk_id"));
 				}
 				if((int)map1.get("wk_id") == 5){
 					mapa.put("suma5", map1.get("suma"));
-					mapa.put("id", map1.get("wk_id"));
 				}
+				mapa.put("id", map1.get("wk_id"));
 				res.add(mapa);
 			}
 		}
 		
-		for (Map<String,Object> map1 : aux) {
-			for(Map<String,Object> mapa2 : res){
-				if(map1.get("wk_id") != null && !map1.get("wk_id").equals(mapa2.get("id")) 
-						&& map1.get("date_completed").equals(mapa2.get("date"))){
-					if((int)mapa2.get("id") == 1)
-						mapa2.put("suma1", map1.get("suma"));
-					if((int)mapa2.get("id") == 2)
-						mapa2.put("suma2", map1.get("suma"));
-					if((int)mapa2.get("id") == 3)
-						mapa2.put("suma3", map1.get("suma"));
-					if((int)mapa2.get("id") == 4)
-						mapa2.put("suma4", map1.get("suma"));
-					if((int)mapa2.get("id") == 5)
-						mapa2.put("suma5", map1.get("suma"));
-
-				}
+		
+		aux = new ArrayList<Map<String,Object>>();
+		for(Map<String,Object> m : res){
+			if(!estaFecha((Date)m.get("date"), aux))
+				aux.add(m);
+			else{
+				for(int i=0;i<aux.size();i++){
+					if(aux.get(i).get("date").equals(m.get("date"))){
+						if(m.get("id") != aux.get(i).get("id")){
+							if((int)m.get("id") == 1)
+								aux.get(i).put("suma1",m.get("suma1"));
+							if((int)m.get("id") == 2)
+								aux.get(i).put("suma2",m.get("suma2"));
+							if((int)m.get("id") == 3)
+								aux.get(i).put("suma3",m.get("suma3"));
+							if((int)m.get("id") == 4)
+								aux.get(i).put("suma4",m.get("suma4"));
+							if((int)m.get("id") == 5)
+								aux.get(i).put("suma5",m.get("suma5"));
+						}
+						
+					}
+				}		
 			}
 		}
 		
-		for (Map<String,Object> map : res) {
+//		for (Map<String,Object> map1 : aux) {
+//			for(Map<String,Object> mapa2 : res){
+//				if(map1.get("wk_id") != null && !map1.get("wk_id").equals(mapa2.get("id")) 
+//						&& map1.get("date_completed").equals(mapa2.get("date"))){
+//					if((int)mapa2.get("id") == 1)
+//						mapa2.put("suma1", map1.get("suma"));
+//					if((int)mapa2.get("id") == 2)
+//						mapa2.put("suma2", map1.get("suma"));
+//					if((int)mapa2.get("id") == 3)
+//						mapa2.put("suma3", map1.get("suma"));
+//					if((int)mapa2.get("id") == 4)
+//						mapa2.put("suma4", map1.get("suma"));
+//					if((int)mapa2.get("id") == 5)
+//						mapa2.put("suma5", map1.get("suma"));
+//
+//				}
+//			}
+//		}
+		
+		for (Map<String,Object> map : aux) {
 			nuevaFila[0] = map.get("date");
 			if(map.get("suma1") == null)
 				nuevaFila[1] = 0;
