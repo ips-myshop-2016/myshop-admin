@@ -278,10 +278,10 @@ public class VentanaPrincipal extends JFrame {
 		List<Map<String,Object>> informe = new ControllerInformes().segundoInforme();
 		
 		for (Map<String,Object> map : informe) {
-			/*nuevaFila[0] = map.get("date");
-			nuevaFila[1] = map.get("suma1");
-			nuevaFila[2] = map.get("suma2");
-			nuevaFila[3] = map.get("suma3")*/
+			nuevaFila[0] = map.get("fecha");
+			nuevaFila[1] = map.get("tarjeta");
+			nuevaFila[2] = map.get("transferencia");
+			nuevaFila[3] = map.get("contrareembolso");
 			modeloTablaSegundoInforme.addRow(nuevaFila);
 		}
 	}
