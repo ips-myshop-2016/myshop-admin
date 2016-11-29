@@ -49,17 +49,19 @@ public class ControllerInformes {
 	}
 
 	public List<Map<String, Object>> tercerInforme() {
-		String complexSql = "SELECT count(*) as suma , wk_id , Date(date_received) "
-				+ "as fecha FROM myshop.full_order where status='finalizado' and wk_id is not null group by fecha, wk_id ";
+		String complexSql = "select Date(date_received) as fecha, SUM(if(wk_id = 1, 1, 0)) as suma1,SUM(if(wk_id = 2, 1, 0)) "
+				+ "as suma2,SUM(if(wk_id = 3, 1, 0)) as suma3, SUM(if(wk_id = 4, 1, 0)) as suma4, SUM(if(wk_id = 5, 1, 0)) as"
+				+ " suma5 from full_order where status='pendiente_de_envio' or status='enviado' group by Day(fecha)";
 		try (Connection con = DefaultSql2o.SQL2O.open()) {
 			return con.createQuery(complexSql).executeAndFetchTable().asList();
 		}
 	}
 
 	public List<Map<String, Object>> cuartoInforme() {
-		String complexSql = "SELECT count(*) as suma , p.wk_id , Date(w.date_completed) as fecha FROM myshop."
-				+ "full_order p , myshop.working_plan w where w.wp_id=p.working_plan_id and w.date_completed is not null "
-				+ "group by fecha, p.wk_id ";
+		String complexSql = "select Date(date_completed) as fecha, SUM(if(p.wk_id = 1, 1, 0))"
+				+ " as suma1,SUM(if(p.wk_id = 2, 1, 0)) as suma2,SUM(if(p.wk_id = 3, 1, 0)) as suma3,"
+				+ " SUM(if(p.wk_id = 4, 1, 0)) as suma4, SUM(if(p.wk_id = 5, 1, 0)) as suma5 from myshop.full_order p "
+				+ ", myshop.working_plan w where w.wp_id=p.working_plan_id and w.date_completed is not null group by Day(fecha)";
 		try (Connection con = DefaultSql2o.SQL2O.open()) {
 			return con.createQuery(complexSql).executeAndFetchTable().asList();
 		}
